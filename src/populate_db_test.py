@@ -19,10 +19,10 @@ class TestSampleData(unittest.TestCase):
         self.db = self.conn.astro
         self.first_image_cll = self.db.first_image
         
-    def testDrop(self):
-        populate_db.drop(db_name, cll_name)
-        self.assertFalse(self.db.last_status()['err'])
-        self.assertEqual(self.first_image_cll.count(), 0)
+#    def testDrop(self):
+#        populate_db.drop(db_name, cll_name)
+#        self.assertFalse(self.db.last_status()['err'])
+#        self.assertEqual(self.first_image_cll.count(), 0)
     
     def testPopulate(self):
         populate_db.drop(db_name, cll_name)

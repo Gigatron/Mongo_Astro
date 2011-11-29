@@ -14,6 +14,7 @@ cll_name = 'first_image'
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print "Error: please give a input file(json format)"
+        sys.exit()
         
     from_file = sys.argv[1]
     
