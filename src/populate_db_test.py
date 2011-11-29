@@ -9,15 +9,15 @@ import populate_db
 from astro_query import QueryHelper
 
 import_file = 'sample_objects_10000.json'
-db_name = 'astro'
+db_name = 'test'
 cll_name = 'first_image'
 
 class TestSampleData(unittest.TestCase):
 
     def setUp(self):
         self.conn = pymongo.Connection()
-        self.db = self.conn.astro
-        self.first_image_cll = self.db.first_image
+        self.db = self.conn[db_name]
+        self.first_image_cll = self.db[cll_name]
         
 #    def testDrop(self):
 #        populate_db.drop(db_name, cll_name)

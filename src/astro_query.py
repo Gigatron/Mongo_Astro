@@ -8,7 +8,6 @@ A simple wrapper
 import json     
 import math
 import pymongo
-from types import DictionaryType
 
 #params may need be changed later
 

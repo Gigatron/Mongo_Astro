@@ -8,7 +8,6 @@ import json
 import argparse
 import sys
 from time import clock
-from test.regrtest import start_time
 
 my_db_name = 'astro'
 batch_size = 10000
@@ -17,22 +16,26 @@ def getDatabase(db_name):
     return pymongo.Connection()[db_name]
 
 def populate(db_name, collection_name, from_file):
+    print "Start loading data from file %s" %from_file
     images = json.load(open(from_file))
+    print "Data loaded."
     db = getDatabase(db_name)
     collection = db[collection_name]
     
     #here we can't do batch insert beyond a given size
     #@todo: more sophisticated calculation may be added here
+    start_time = clock()
     count = 1
     print "Start batch insert, batch size is %d" %batch_size
     while images != []:
-        start_time = clock()
+        _start_time = clock()
         collection.insert(images[:batch_size])
-        end_time = clock()
-        print "The %d batch of data are inserted, %2f used"  %(count, end_time - start_time)
+        _end_time = clock()
+        print "The %d batch of data are inserted, %.2f used"  %(count, _end_time - _start_time)
         
         images = images[batch_size:]
         count += 1
+    print "Data importing finished... %.2f seconds used in total" % (clock() - start_time)
         
 
 def drop(db_name, collection_name):
