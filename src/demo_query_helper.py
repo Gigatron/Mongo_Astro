@@ -19,10 +19,13 @@ if __name__ == '__main__':
     print 'test the range query:'
     print '--------------------------------------------------------'
     print "Original returns without min cover is:"
-    for i in qhelper.range_query_without_min_cover(range, 'E'):
+    ret = qhelper.range_query_without_min_cover(range, 'E')
+    for i in ret:
         print i
-    
+    print 'number of object returned: %d' %len(ret)
     print '--------------------------------------------------------'
     print "min cover for the range query area %s is:" %range
-    for i in  qhelper.range_query(range, 'E'):
+    ret = qhelper.range_query(range, 'E')
+    for i in  ret:
         print i
+    print 'number of object returned: %d' %len(ret)

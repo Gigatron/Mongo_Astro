@@ -58,27 +58,24 @@ class QueryHelper(object):
         is a list of the file pahts
         @param range: [ra_min, dec_min, ra_max, dec_max]
         '''
-        if not (type(range) == list or type(range) == tuple):
-            print "Argument range is not correct, type list is required!"
-            return None
-        if not len(range) == 4:
-            print "Incorrect range has been provided in range argument!"
-            return None
-        
-        #matched item is different from matched matched object
-        #here we play a trick, we expand the range to query so that we involve in more objects, meaning that objects
-        #whose center point is not in the range can be included, so that there will be not uncovering area on the fringes
-        matched_objects = list(self.cll.find({'loc' : {'$within': {'$box' : [{'ra': range[0] - ra_offset, 'dec': range[1] - dec_offset}, 
-                                                                             {'ra' : range[2] + ra_offset, 'dec': range[3] + dec_offset}]}}}))      
+
+        #matched item is different from matched matched object      
+        matched_objects = self.__intersect_objects(range, filter_type)  
         matched_items = [Item(object, [object['loc']['ra'] - ra_offset, object['loc']['dec'] - dec_offset, 
                                        object['loc']['ra'] + ra_offset, object['loc']['dec'] + dec_offset]) for object in matched_objects]
-        #put the filter before the following process is better
-        filter(lambda x: x.object['filter'] in filter_type, matched_items)
+
         min_cover_objects = self.__find_min_cover(range, matched_items)
-        return [item['path'] for item in min_cover_objects]
+        return [object['path'] for object in min_cover_objects]
     
     def range_query_without_min_cover(self, range, filter_type):
         '''a range query return all objects with in the given range and matching the filter_type'''
+        
+        #matched item is different from matched matched object
+        matched_objects = self.__intersect_objects(range, filter_type)
+        
+        return [item['path'] for item in matched_objects]
+    
+    def __intersect_objects(self, range, filter_type):
         if not (type(range) == list or type(range) == tuple):
             print "Argument range is not correct, type list is required!"
             return None
@@ -86,11 +83,13 @@ class QueryHelper(object):
             print "Incorrect range has been provided in range argument!"
             return None
         
-        #matched item is different from matched matched object
+        #here we play a trick, we expand the range to query so that we involve in more objects, meaning that objects
+        #whose center point is not in the range can be included, so that there will be not uncovering area on the fringes
+        filter_type_list = [c.upper() for c in filter_type]
         matched_objects = list(self.cll.find({'loc' : {'$within': {'$box' : [{'ra': range[0] - ra_offset, 'dec': range[1] - dec_offset}, 
-                                                                             {'ra' : range[2] + ra_offset, 'dec': range[3] + dec_offset}]}}})) 
-        
-        return [item['path'] for item in matched_objects]
+                                                                             {'ra' : range[2] + ra_offset, 'dec': range[3] + dec_offset}]}},
+                                                                             'filter' : {'$in' : filter_type_list}})) 
+        return matched_objects
         
         
     def __find_min_cover(self, area_range, matched_items):
