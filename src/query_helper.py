@@ -8,11 +8,12 @@ A simple wrapper
 import json     
 import math
 import pymongo
+from macerrors import ioErr
 
 #params may need be changed later
+#ra_offset = 11
+#dec_offset = 232
 
-ra_offset = 11
-dec_offset = 232
 
 class Item(object):
     '''the class encapsulate the object with its bounding box'''
@@ -20,8 +21,7 @@ class Item(object):
         self.object = object
         self.bbox = bbox
         
-        
-        
+                
 class QueryHelper(object):
     
 
@@ -29,6 +29,10 @@ class QueryHelper(object):
         self.conn = pymongo.Connection()
         self.db = self.conn[db_name]
         self.cll = self.db[cll_name]
+        _config = json.load(open('first_config', 'r'))
+        self.ra_offset = _config['ra_offset']
+        self.dec_offset = _config['dec_offset']
+         
 
     
     def ensure_index(self, key, min, max):
@@ -61,8 +65,8 @@ class QueryHelper(object):
 
         #matched item is different from matched matched object      
         matched_objects = self.__intersect_objects(range, filter_type)  
-        matched_items = [Item(object, [object['loc']['ra'] - ra_offset, object['loc']['dec'] - dec_offset, 
-                                       object['loc']['ra'] + ra_offset, object['loc']['dec'] + dec_offset]) for object in matched_objects]
+        matched_items = [Item(object, [object['loc']['ra'] - self.ra_offset, object['loc']['dec'] - self.dec_offset, 
+                                       object['loc']['ra'] + self.ra_offset, object['loc']['dec'] + self.dec_offset]) for object in matched_objects]
 
         min_cover_objects = self.__find_min_cover(range, matched_items)
         return [object['path'] for object in min_cover_objects]
@@ -86,8 +90,8 @@ class QueryHelper(object):
         #here we play a trick, we expand the range to query so that we involve in more objects, meaning that objects
         #whose center point is not in the range can be included, so that there will be not uncovering area on the fringes
         filter_type_list = [c.upper() for c in filter_type]
-        matched_objects = list(self.cll.find({'loc' : {'$within': {'$box' : [{'ra': range[0] - ra_offset, 'dec': range[1] - dec_offset}, 
-                                                                             {'ra' : range[2] + ra_offset, 'dec': range[3] + dec_offset}]}},
+        matched_objects = list(self.cll.find({'loc' : {'$within': {'$box' : [{'ra': range[0] - self.ra_offset, 'dec': range[1] - self.dec_offset}, 
+                                                                             {'ra' : range[2] + self.ra_offset, 'dec': range[3] + self.dec_offset}]}},
                                                                              'filter' : {'$in' : filter_type_list}})) 
         return matched_objects
         

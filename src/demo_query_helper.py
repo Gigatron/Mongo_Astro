@@ -5,7 +5,7 @@ Created on Nov 29, 2011
 '''
 from query_helper import QueryHelper
 
-    
+   
 if __name__ == '__main__':
     db_name = 'astro'
     coll_name = 'first_image'
