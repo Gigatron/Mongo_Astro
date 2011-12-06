@@ -8,7 +8,6 @@ A simple wrapper
 import json     
 import math
 import pymongo
-from macerrors import ioErr
 
 #params may need be changed later
 #ra_offset = 11

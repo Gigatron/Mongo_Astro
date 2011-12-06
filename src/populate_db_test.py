@@ -6,7 +6,7 @@ test for populate/drop db collection data
 import unittest
 import pymongo
 import populate_db
-from astro_query import QueryHelper
+from query_helper import QueryHelper
 
 import_file = 'sample_objects_10000.json'
 db_name = 'test'
