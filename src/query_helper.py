@@ -29,8 +29,8 @@ class QueryHelper(object):
         self.db = self.conn[db_name]
         self.cll = self.db[cll_name]
         _config = json.load(open('first_config', 'r'))
-        self.ra_offset = _config['ra_offset']
-        self.dec_offset = _config['dec_offset']
+        self.ra_offset = _config['ra_offset']/2
+        self.dec_offset = _config['dec_offset']/2
          
 
     
